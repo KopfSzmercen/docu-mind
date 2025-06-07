@@ -15,30 +15,37 @@ import * as bcrypt from 'bcrypt';
 import { SignInUserResponse } from 'src/users/features/sign-in';
 import { v4 } from 'uuid';
 import { GetMeResponse } from 'src/users/features/get-me';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 describe('User features tests', () => {
   let app: INestApplication;
   let postgresTestContainer: StartedPostgreSqlContainer;
 
   beforeAll(async () => {
-    postgresTestContainer = await new PostgreSqlContainer('postgres')
+    postgresTestContainer = await new PostgreSqlContainer('postgres:16-alpine')
       .withExposedPorts(5432)
       .withDatabase('nest')
       .withUsername('root')
       .withPassword('secret')
+      .withStartupTimeout(120_000)
       .start();
 
-    process.env.DB_HOST = postgresTestContainer.getHost();
-    process.env.DB_PORT = postgresTestContainer.getMappedPort(5432).toString();
-    process.env.DB_NAME = 'nest';
-    process.env.DB_USER = 'root';
-    process.env.DB_PASSWORD = 'secret';
-    process.env.JWT_SECRET =
-      'testsecretkey123456789010111213141516171819202122232425262';
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideModule(MikroOrmModule)
+      .useModule(
+        MikroOrmModule.forRoot({
+          dbName: postgresTestContainer.getDatabase(),
+          port: postgresTestContainer.getMappedPort(5432),
+          host: postgresTestContainer.getHost(),
+          user: postgresTestContainer.getUsername(),
+          password: postgresTestContainer.getPassword(),
+        }),
+      )
+      .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
@@ -48,7 +55,7 @@ describe('User features tests', () => {
 
     const userRepository: EntityRepository<User> = em.getRepository(User);
     await userRepository.nativeDelete({});
-  });
+  }, 120_000);
 
   afterAll(async () => {
     await app.close();

@@ -6,10 +6,10 @@ import { Migrator } from '@mikro-orm/migrations';
 const logger = new Logger('MikroORM');
 
 const config: Options<PostgreSqlDriver> = defineConfig({
-  dbName: process.env.DB_NAME || 'my_database',
-  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5432,
-  host: process.env.DB_HOST || 'localhost',
-  password: process.env.DB_PASSWORD || 'password',
+  dbName: process.env.DB_NAME,
+  port: parseInt(process.env.DB_PORT!, 10),
+  host: process.env.DB_HOST,
+  password: process.env.DB_PASSWORD,
 
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
