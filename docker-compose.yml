@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  postgres-dev:
+    image: postgres:16-alpine
+    container_name: docu-mind-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: docu_mind_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dev_password
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - docu-mind-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  docu-mind-network:
+    driver: bridge
