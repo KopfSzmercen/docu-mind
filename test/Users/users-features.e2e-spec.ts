@@ -14,6 +14,7 @@ import { User } from '../../src/users/user.entity';
 import * as bcrypt from 'bcrypt';
 import { SignInUserResponse } from 'src/users/features/sign-in';
 import { v4 } from 'uuid';
+import { GetMeResponse } from 'src/users/features/get-me';
 
 describe('User features tests', () => {
   let app: INestApplication;
@@ -109,5 +110,43 @@ describe('User features tests', () => {
 
     const responseBody = signInResponse.body as SignInUserResponse;
     expect(responseBody.accessToken).toBeDefined();
+  });
+
+  it("(GET /me) should return the user's profile", async () => {
+    const orm: MikroORM = app.get(MikroORM);
+    const em = orm.em.fork();
+    const userRepository: EntityRepository<User> = em.getRepository(User);
+
+    const plainPassword = 'testpassword';
+    const user = userRepository.create({
+      fullName: 'testuser',
+      email: 'test@t.com',
+      password: await bcrypt.hash(plainPassword, 10),
+      id: v4(),
+    });
+    await em.persistAndFlush(user);
+
+    // Sign in to get the token
+    const signInResponse = await request(app.getHttpServer() as App)
+      .post('/users/sign-in')
+      .send({
+        email: user.email,
+        password: plainPassword,
+      });
+
+    expect(signInResponse.status).toBe(201);
+    const signInBody = signInResponse.body as SignInUserResponse;
+    expect(signInBody.accessToken).toBeDefined();
+
+    // Request the /me endpoint
+    const meResponse = await request(app.getHttpServer() as App)
+      .get('/users/me')
+      .set('Authorization', `Bearer ${signInBody.accessToken}`);
+
+    const responseBody = meResponse.body as GetMeResponse;
+    expect(meResponse.status).toBe(200);
+    expect(responseBody.id).toBe(user.id);
+    expect(responseBody.email).toBe(user.email);
+    expect(responseBody.fullName).toBe(user.fullName);
   });
 });

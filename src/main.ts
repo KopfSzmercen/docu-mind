@@ -12,6 +12,18 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Docu mind')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
+
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
