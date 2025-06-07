@@ -1,8 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Module } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
+import { PersistnceModule } from '../src/infrastructure/persistence/persistence.module';
+import { UsersModule } from '../src/users/users.module';
+
+@Module({
+  imports: [],
+  controllers: [],
+  providers: [],
+})
+class MockModule {}
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
@@ -10,7 +19,12 @@ describe('AppController (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideModule(PersistnceModule)
+      .useModule(MockModule)
+      .overrideModule(UsersModule)
+      .useModule(MockModule)
+      .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();

@@ -1,60 +1,52 @@
 import { EntityRepository } from '@mikro-orm/core';
 import { MikroORM } from '@mikro-orm/postgresql';
 import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import {
   PostgreSqlContainer,
   StartedPostgreSqlContainer,
 } from '@testcontainers/postgresql';
+import * as bcrypt from 'bcrypt';
+import { GetMeResponse } from 'src/users/features/get-me';
+import { SignInUserResponse } from 'src/users/features/sign-in';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
+import { v4 } from 'uuid';
 import { AppModule } from '../../src/app.module';
 import { RegisterUserRequest } from '../../src/users/features/register';
 import { User } from '../../src/users/user.entity';
-import * as bcrypt from 'bcrypt';
-import { SignInUserResponse } from 'src/users/features/sign-in';
-import { v4 } from 'uuid';
-import { GetMeResponse } from 'src/users/features/get-me';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 describe('User features tests', () => {
   let app: INestApplication;
   let postgresTestContainer: StartedPostgreSqlContainer;
 
   beforeAll(async () => {
-    postgresTestContainer = await new PostgreSqlContainer('postgres:16-alpine')
-      .withExposedPorts(5432)
-      .withDatabase('nest')
-      .withUsername('root')
-      .withPassword('secret')
-      .withStartupTimeout(120_000)
-      .start();
+    postgresTestContainer = await new PostgreSqlContainer('postgres').start();
 
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const mockConfigService = {
+      get: jest.fn((key: string) => {
+        const config = {
+          DB_HOST: postgresTestContainer.getHost(),
+          DB_PORT: postgresTestContainer.getPort(),
+          DB_NAME: postgresTestContainer.getDatabase(),
+          DB_PASSWORD: postgresTestContainer.getPassword(),
+          DB_USER: postgresTestContainer.getUsername(),
+        };
+        //eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return config[key];
+      }),
+    };
 
     const moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     })
-      .overrideModule(MikroOrmModule)
-      .useModule(
-        MikroOrmModule.forRoot({
-          dbName: postgresTestContainer.getDatabase(),
-          port: postgresTestContainer.getMappedPort(5432),
-          host: postgresTestContainer.getHost(),
-          user: postgresTestContainer.getUsername(),
-          password: postgresTestContainer.getPassword(),
-        }),
-      )
+      .overrideProvider(ConfigService)
+      .useValue(mockConfigService)
       .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
-
-    const orm: MikroORM = app.get(MikroORM);
-    const em = orm.em.fork();
-
-    const userRepository: EntityRepository<User> = em.getRepository(User);
-    await userRepository.nativeDelete({});
   }, 120_000);
 
   afterAll(async () => {
