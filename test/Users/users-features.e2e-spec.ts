@@ -11,6 +11,9 @@ import { App } from 'supertest/types';
 import { AppModule } from '../../src/app.module';
 import { RegisterUserRequest } from '../../src/users/features/register';
 import { User } from '../../src/users/user.entity';
+import * as bcrypt from 'bcrypt';
+import { SignInUserResponse } from 'src/users/features/sign-in';
+import { v4 } from 'uuid';
 
 describe('User features tests', () => {
   let app: INestApplication;
@@ -29,6 +32,8 @@ describe('User features tests', () => {
     process.env.DB_NAME = 'nest';
     process.env.DB_USER = 'root';
     process.env.DB_PASSWORD = 'secret';
+    process.env.JWT_SECRET =
+      'testsecretkey123456789010111213141516171819202122232425262';
 
     const moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
@@ -47,6 +52,13 @@ describe('User features tests', () => {
   afterAll(async () => {
     await app.close();
     await postgresTestContainer.stop();
+  });
+
+  afterEach(async () => {
+    const orm: MikroORM = app.get(MikroORM);
+    const em = orm.em.fork();
+    const userRepository: EntityRepository<User> = em.getRepository(User);
+    await userRepository.nativeDelete({});
   });
 
   it('(POST /register) should register a new user', async () => {
@@ -72,5 +84,30 @@ describe('User features tests', () => {
 
     expect(createdUser).toBeDefined();
     expect(createdUser!.email).toBe(registerUserRequest.email);
+  });
+
+  it('(POST /sign-in) should sign in an existing user', async () => {
+    const orm: MikroORM = app.get(MikroORM);
+    const em = orm.em.fork();
+    const userRepository: EntityRepository<User> = em.getRepository(User);
+    const user = userRepository.create({
+      fullName: 'testuser',
+      email: 'test@t.pl',
+      password: await bcrypt.hash('testpassword', 10),
+      id: v4(),
+    });
+    await em.flush();
+
+    const signInResponse = await request(app.getHttpServer() as App)
+      .post('/users/sign-in')
+      .send({
+        email: user.email,
+        password: 'testpassword',
+      });
+
+    expect(signInResponse.status).toBe(201);
+
+    const responseBody = signInResponse.body as SignInUserResponse;
+    expect(responseBody.accessToken).toBeDefined();
   });
 });

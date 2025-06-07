@@ -12,6 +12,7 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { User } from '../user.entity';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { v4 } from 'uuid';
+import * as bcrypt from 'bcrypt';
 
 export class RegisterUserRequest {
   @ApiProperty()
@@ -51,11 +52,13 @@ export default class RegisterUser extends UsersControllerBase {
     if (userWithTheSameEmailExists)
       throw new BadRequestException('Email already exists');
 
+    const hashedPassword = await bcrypt.hash(request.password, 10);
+
     const user = this.userRepository.create({
       id: v4(),
       fullName: request.username,
       email: request.email,
-      password: request.password,
+      password: hashedPassword,
     });
 
     await this.em.flush();
