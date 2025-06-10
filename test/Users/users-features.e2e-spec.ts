@@ -32,6 +32,7 @@ describe('User features tests', () => {
           DB_NAME: postgresTestContainer.getDatabase(),
           DB_PASSWORD: postgresTestContainer.getPassword(),
           DB_USER: postgresTestContainer.getUsername(),
+          JWT_SECRET: 'test-secret-1234566',
         };
         //eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return config[key];

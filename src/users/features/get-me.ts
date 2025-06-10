@@ -4,8 +4,8 @@ import { Get, Req, UseGuards } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { AuthGuard } from '../../common/auth.guard';
 import { JwtPayload } from '../../common/jwt-payload.type';
-import { User } from '../../users/user.entity';
 import { UsersControllerBase } from '../users.controller.base';
+import { User } from 'src/users/user.entity';
 
 export class GetMeResponse {
   @ApiProperty()

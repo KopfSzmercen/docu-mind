@@ -1,8 +1,13 @@
 module.exports = {
-  testEnvironment: 'node',
-  setupFilesAfterEnv: ['./test/jest-unit.json'],
-  testMatch: ['**/src/**/*.spec.ts'],
+  moduleFileExtensions: ['js', 'json', 'ts'],
+  rootDir: 'src',
+  testRegex: '.*\\.spec\\.ts$',
   transform: {
-    '^.+\\.ts$': 'ts-jest'
-  }
+    '^.+\\.(t|j)s$': 'ts-jest'
+  },
+  collectCoverageFrom: [
+    '**/*.(t|j)s'
+  ],
+  coverageDirectory: '../coverage',
+  testEnvironment: 'node'
 };
