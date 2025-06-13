@@ -6,8 +6,8 @@ import { TokenTextSplitter } from '@langchain/textsplitters';
 export class DocumentSplittingService {
   public async splitDocument(documentText: string) {
     const textSplitter = new TokenTextSplitter({
-      chunkSize: 20,
-      chunkOverlap: 5,
+      chunkSize: 800,
+      chunkOverlap: 80,
     });
 
     const texts = await textSplitter.splitText(documentText);
