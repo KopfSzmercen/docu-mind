@@ -6,9 +6,14 @@ export interface IEmbeddingService {
     text: string,
   ): Promise<{ embedding: number[]; vectorLength: number }>;
 
-  embedTexts(
-    texts: string[],
-  ): Promise<{ embedding: number[]; vectorLength: number; index: number }[]>;
+  embedTexts(texts: string[]): Promise<
+    {
+      embedding: number[];
+      vectorLength: number;
+      index: number;
+      originalText: string;
+    }[]
+  >;
 }
 
 export const IEmbeddingServiceToken = Symbol('IEmbeddingService');
@@ -39,9 +44,14 @@ export class EmbeddingService implements IEmbeddingService {
     };
   }
 
-  async embedTexts(
-    texts: string[],
-  ): Promise<{ embedding: number[]; vectorLength: number; index: number }[]> {
+  async embedTexts(texts: string[]): Promise<
+    {
+      embedding: number[];
+      vectorLength: number;
+      index: number;
+      originalText: string;
+    }[]
+  > {
     if (texts.length === 0) {
       throw new Error('Texts for embedding cannot be empty');
     }
@@ -67,6 +77,7 @@ export class EmbeddingService implements IEmbeddingService {
       index: e.index,
       embedding: e.embedding,
       vectorLength: 1536, // https://platform.openai.com/docs/guides/embeddings - text-embedding-3-small
+      originalText: texts[e.index],
     }));
   }
 }

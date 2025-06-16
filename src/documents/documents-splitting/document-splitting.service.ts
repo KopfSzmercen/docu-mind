@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { Document } from '@langchain/core/documents';
 import { TokenTextSplitter } from '@langchain/textsplitters';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class DocumentSplittingService {

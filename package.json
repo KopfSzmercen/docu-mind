@@ -20,8 +20,13 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^1.3.22",
     "@langchain/core": "^0.3.57",
     "@langchain/textsplitters": "^0.1.0",
+    "@mastra/core": "^0.10.5",
+    "@mastra/libsql": "^0.10.2",
+    "@mastra/loggers": "^0.10.2",
+    "@mastra/memory": "^0.10.3",
     "@mikro-orm/core": "^6.4.16",
     "@mikro-orm/migrations": "^6.4.16",
     "@mikro-orm/nestjs": "^6.1.1",
@@ -36,11 +41,13 @@
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "core@latest": "link:mastra/core@latest",
     "dotenv": "^16.5.0",
     "openai": "^5.3.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^3.25.64"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

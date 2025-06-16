@@ -21,6 +21,7 @@ export interface IVectorStoreService {
     {
       documentId: string;
       pointId: string;
+      text: string;
     }[]
   >;
 }
@@ -58,7 +59,7 @@ export class VectorStoreService implements IVectorStoreService {
     await this.client.createCollection(this.collectionName, {
       vectors: {
         distance: 'Cosine',
-        size: 1536, // Changed from 1536 to 1024 for MLE5Large model
+        size: 1536,
       },
       timeout: 20,
     });
@@ -80,6 +81,7 @@ export class VectorStoreService implements IVectorStoreService {
         documentId,
         userId,
         partIndex: embedding.index,
+        text: embedding.originalText,
       },
     }));
 
@@ -100,14 +102,17 @@ export class VectorStoreService implements IVectorStoreService {
     {
       documentId: string;
       pointId: string;
+      text: string;
     }[]
   > {
+    await this.ensureCollectionExists();
+
     const queryEmbedding = await this.emeddingService.embedText(query);
 
     const matchingPoints = await this.client.query(this.collectionName, {
       query: Array.from(queryEmbedding.embedding),
       with_payload: {
-        include: ['userId', 'documentId'],
+        include: ['userId', 'documentId', 'text'],
       },
       filter: {
         must: [
@@ -125,6 +130,7 @@ export class VectorStoreService implements IVectorStoreService {
     return matchingPoints.points.map((point) => ({
       documentId: point.payload!.documentId as string,
       pointId: point.id.toString(),
+      text: point.payload!.text as string,
     }));
   }
 }

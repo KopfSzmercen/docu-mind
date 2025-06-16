@@ -22,9 +22,13 @@ class FoundPointResponse {
   @ApiProperty()
   pointId: string;
 
-  constructor(documentId: string, pointId: string) {
+  @ApiProperty()
+  text: string;
+
+  constructor(documentId: string, pointId: string, text: string) {
     this.documentId = documentId;
     this.pointId = pointId;
+    this.text = text;
   }
 }
 
@@ -64,7 +68,12 @@ export default class QueryDocuments extends DocumentsControllerBase {
 
     return new SearchDocumentsResponse(
       results.map(
-        (result) => new FoundPointResponse(result.documentId, result.pointId),
+        (result) =>
+          new FoundPointResponse(
+            result.documentId,
+            result.pointId,
+            result.text,
+          ),
       ),
     );
   }
