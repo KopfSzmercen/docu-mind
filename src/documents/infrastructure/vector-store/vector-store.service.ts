@@ -124,7 +124,7 @@ export class VectorStoreService implements IVectorStoreService {
           },
         ],
       },
-      limit: 5,
+      limit: 1,
     });
 
     return matchingPoints.points.map((point) => ({
