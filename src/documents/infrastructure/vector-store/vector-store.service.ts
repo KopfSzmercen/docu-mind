@@ -24,6 +24,8 @@ export interface IVectorStoreService {
       text: string;
     }[]
   >;
+
+  deleteDocument(documentId: string, userId: string): Promise<void>;
 }
 
 export const IVectorStoreServiceToken = Symbol('IVectorStoreService');
@@ -132,5 +134,28 @@ export class VectorStoreService implements IVectorStoreService {
       pointId: point.id.toString(),
       text: point.payload!.text as string,
     }));
+  }
+
+  async deleteDocument(documentId: string, userId: string): Promise<void> {
+    await this.ensureCollectionExists();
+
+    const filter = {
+      must: [
+        {
+          key: 'documentId',
+          match: {
+            value: documentId,
+          },
+        },
+        {
+          key: 'userId',
+          match: {
+            value: userId,
+          },
+        },
+      ],
+    };
+
+    await this.client.delete(this.collectionName, { filter });
   }
 }

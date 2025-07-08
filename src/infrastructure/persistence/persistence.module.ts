@@ -1,7 +1,7 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 import { MigratorService } from './migrator.service';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
 import { Migrator } from '@mikro-orm/migrations';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
@@ -32,6 +32,7 @@ const logger = new Logger('MikroORM');
         };
       },
       inject: [ConfigService],
+      imports: [ConfigModule],
       driver: PostgreSqlDriver,
     }),
   ],

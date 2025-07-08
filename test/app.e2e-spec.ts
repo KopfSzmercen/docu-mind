@@ -5,6 +5,7 @@ import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { PersistnceModule } from '../src/infrastructure/persistence/persistence.module';
 import { UsersModule } from '../src/users/users.module';
+import { DocumentsModule } from 'src/documents/documents.module';
 
 @Module({
   imports: [],
@@ -23,6 +24,8 @@ describe('AppController (e2e)', () => {
       .overrideModule(PersistnceModule)
       .useModule(MockModule)
       .overrideModule(UsersModule)
+      .useModule(MockModule)
+      .overrideModule(DocumentsModule)
       .useModule(MockModule)
       .compile();
 
