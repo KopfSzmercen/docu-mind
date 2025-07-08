@@ -1,6 +1,6 @@
 import { EntityRepository } from '@mikro-orm/core';
 import { MikroORM } from '@mikro-orm/postgresql';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import {
@@ -16,6 +16,14 @@ import { v4 } from 'uuid';
 import { AppModule } from '../../src/app.module';
 import { RegisterUserRequest } from '../../src/users/features/register';
 import { User } from '../../src/users/user.entity';
+import { DocumentsModule } from 'src/documents/documents.module';
+
+@Module({
+  imports: [],
+  controllers: [],
+  providers: [],
+})
+class MockModule {}
 
 describe('User features tests', () => {
   let app: INestApplication;
@@ -44,6 +52,8 @@ describe('User features tests', () => {
     })
       .overrideProvider(ConfigService)
       .useValue(mockConfigService)
+      .overrideModule(DocumentsModule)
+      .useModule(MockModule)
       .compile();
 
     app = moduleFixture.createNestApplication();

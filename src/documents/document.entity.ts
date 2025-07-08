@@ -1,4 +1,11 @@
-import { Entity, ManyToOne, Property } from '@mikro-orm/core';
+import {
+  Collection,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  Property,
+} from '@mikro-orm/core';
+import { DocumentNote } from 'src/documents/documentNote.entity';
 import { User } from 'src/users/user.entity';
 
 @Entity()
@@ -12,9 +19,15 @@ export class Document {
   @Property({ type: 'text' })
   text!: string;
 
-  @Property()
+  @Property({ onCreate: () => new Date() })
   createdAt!: Date;
+
+  @Property({ nullable: true, onUpdate: () => new Date() })
+  updatedAt?: Date;
 
   @ManyToOne(() => User, { fieldName: 'userId' })
   user!: User;
+
+  @OneToMany(() => DocumentNote, (note) => note.document)
+  notes = new Collection<DocumentNote>(this);
 }
