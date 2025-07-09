@@ -12,12 +12,17 @@ import EditNote from 'src/documents/features/edit-note';
 import QueryDocuments from 'src/documents/features/query-documents';
 import QueryDocumentsAi from 'src/documents/features/query-documents-ai';
 import UploadDocument from 'src/documents/features/upload-document';
+import CreateWorkspace from 'src/documents/features/workspaces/create-workspace';
+import EditWorkspace from 'src/documents/features/workspaces/edit-workspace';
+import DeleteWorkspace from 'src/documents/features/workspaces/delete-workspace';
 import { VectorStoreModule } from 'src/documents/infrastructure/vector-store/vector-store.module';
+import { Workspace } from 'src/documents/workspace.entity';
+import AddDocumentToWorkspace from 'src/documents/features/workspaces/add-document-to-workspace';
 
 @Module({
   imports: [
     VectorStoreModule,
-    MikroOrmModule.forFeature([Document, DocumentNote]),
+    MikroOrmModule.forFeature([Document, DocumentNote, Workspace]),
   ],
   controllers: [
     UploadDocument,
@@ -29,6 +34,10 @@ import { VectorStoreModule } from 'src/documents/infrastructure/vector-store/vec
     AddNote,
     EditNote,
     DeleteNote,
+    CreateWorkspace,
+    EditWorkspace,
+    DeleteWorkspace,
+    AddDocumentToWorkspace,
   ],
   providers: [DocumentSplittingService],
   exports: [],

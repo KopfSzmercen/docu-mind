@@ -6,6 +6,7 @@ import {
   Property,
 } from '@mikro-orm/core';
 import { DocumentNote } from 'src/documents/documentNote.entity';
+import { Workspace } from 'src/documents/workspace.entity';
 import { User } from 'src/users/user.entity';
 
 @Entity()
@@ -30,4 +31,10 @@ export class Document {
 
   @OneToMany(() => DocumentNote, (note) => note.document)
   notes = new Collection<DocumentNote>(this);
+
+  @Property({ nullable: true })
+  workspaceId?: string;
+
+  @ManyToOne(() => Workspace, { fieldName: 'workspaceId', nullable: true })
+  workspace?: Workspace;
 }
