@@ -20,11 +20,18 @@ import { VectorStoreModule } from 'src/documents/infrastructure/vector-store/vec
 import { Workspace } from 'src/documents/workspace.entity';
 import AddDocumentToWorkspace from 'src/documents/features/workspaces/add-document-to-workspace';
 import RemoveDocumentFromWorkspace from 'src/documents/features/workspaces/remove-document-from-workspace';
+import { Category } from 'src/documents/category.entity';
+import AddCategory from 'src/documents/features/categories/add-category';
+import BrowseCategories from 'src/documents/features/categories/browse-categories';
+import EditCategory from 'src/documents/features/categories/edit-category';
+import DeleteCategory from 'src/documents/features/categories/delete-category';
+import AddDocumentToCategory from 'src/documents/features/categories/add-document-to-category';
+import RemoveDocumentFromCategory from 'src/documents/features/categories/remove-document-from-category';
 
 @Module({
   imports: [
     VectorStoreModule,
-    MikroOrmModule.forFeature([Document, DocumentNote, Workspace]),
+    MikroOrmModule.forFeature([Document, DocumentNote, Workspace, Category]),
   ],
   controllers: [
     UploadDocument,
@@ -42,6 +49,12 @@ import RemoveDocumentFromWorkspace from 'src/documents/features/workspaces/remov
     DeleteWorkspace,
     AddDocumentToWorkspace,
     RemoveDocumentFromWorkspace,
+    AddCategory,
+    BrowseCategories,
+    EditCategory,
+    DeleteCategory,
+    AddDocumentToCategory,
+    RemoveDocumentFromCategory,
   ],
   providers: [DocumentSplittingService],
   exports: [],

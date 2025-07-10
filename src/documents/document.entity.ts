@@ -5,6 +5,7 @@ import {
   OneToMany,
   Property,
 } from '@mikro-orm/core';
+import { Category } from 'src/documents/category.entity';
 import { DocumentNote } from 'src/documents/documentNote.entity';
 import { Workspace } from 'src/documents/workspace.entity';
 import { User } from 'src/users/user.entity';
@@ -37,4 +38,10 @@ export class Document {
 
   @ManyToOne(() => Workspace, { fieldName: 'workspaceId', nullable: true })
   workspace?: Workspace | null;
+
+  @Property({ nullable: true })
+  categoryId?: string | null;
+
+  @ManyToOne(() => Category, { fieldName: 'categoryId', nullable: true })
+  category?: Category | null;
 }
