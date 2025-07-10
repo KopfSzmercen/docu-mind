@@ -14,7 +14,7 @@ import { DocumentSplittingService } from 'src/documents/documents-splitting/docu
 import {
   UploadDocumentRequest,
   UploadDocumentResponse,
-} from 'src/documents/features/upload-document';
+} from 'src/documents/features/documents/upload-document';
 import { AddDocumentToWorkspaceRequest } from 'src/documents/features/workspaces/add-document-to-workspace';
 import {
   CreateWorkspaceRequest,

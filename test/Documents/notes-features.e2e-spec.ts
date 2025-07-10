@@ -11,8 +11,8 @@ import * as bcrypt from 'bcrypt';
 import { Document } from 'src/documents/document.entity';
 import { DocumentNote } from 'src/documents/documentNote.entity';
 import { DocumentSplittingService } from 'src/documents/documents-splitting/document-splitting.service';
-import { AddNoteResponse } from 'src/documents/features/add-note';
-import { BrowseNotesResponse } from 'src/documents/features/browse-notes';
+import { AddNoteResponse } from 'src/documents/features/notes/add-note';
+import { BrowseNotesResponse } from 'src/documents/features/notes/browse-notes';
 import {
   IVectorStoreService,
   IVectorStoreServiceToken,
@@ -23,7 +23,7 @@ import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { v4 } from 'uuid';
 import { AppModule } from '../../src/app.module';
-import { EditNoteResponse } from 'src/documents/features/edit-note';
+import { EditNoteResponse } from 'src/documents/features/notes/edit-note';
 
 describe('Notes features tests', () => {
   let app: INestApplication;

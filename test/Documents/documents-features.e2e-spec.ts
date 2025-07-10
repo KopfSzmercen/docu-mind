@@ -23,7 +23,7 @@ import { AppModule } from '../../src/app.module';
 import {
   UploadDocumentRequest,
   UploadDocumentResponse,
-} from '../../src/documents/features/upload-document';
+} from '../../src/documents/features/documents/upload-document';
 
 describe('Documents features tests', () => {
   let app: INestApplication;
