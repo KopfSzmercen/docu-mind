@@ -33,8 +33,8 @@ export class Document {
   notes = new Collection<DocumentNote>(this);
 
   @Property({ nullable: true })
-  workspaceId?: string;
+  workspaceId?: string | null;
 
   @ManyToOne(() => Workspace, { fieldName: 'workspaceId', nullable: true })
-  workspace?: Workspace;
+  workspace?: Workspace | null;
 }

@@ -18,6 +18,7 @@ import DeleteWorkspace from 'src/documents/features/workspaces/delete-workspace'
 import { VectorStoreModule } from 'src/documents/infrastructure/vector-store/vector-store.module';
 import { Workspace } from 'src/documents/workspace.entity';
 import AddDocumentToWorkspace from 'src/documents/features/workspaces/add-document-to-workspace';
+import RemoveDocumentFromWorkspace from 'src/documents/features/workspaces/remove-document-from-workspace';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import AddDocumentToWorkspace from 'src/documents/features/workspaces/add-docume
     EditWorkspace,
     DeleteWorkspace,
     AddDocumentToWorkspace,
+    RemoveDocumentFromWorkspace,
   ],
   providers: [DocumentSplittingService],
   exports: [],

@@ -353,4 +353,66 @@ describe('Workspaces features tests', () => {
     expect(workspace?.documents).toHaveLength(1);
     expect(workspace?.documents[0].id).toBe(createDocumentResponseBody.message);
   });
+
+  it('(DELETE /workspaces/:workspaceId/documents/:documentId) should remove a document from a workspace', async () => {
+    // Arrange
+    const { accessToken } = await setupUser();
+    const createWorkspaceRequest = new CreateWorkspaceRequest();
+    createWorkspaceRequest.name = 'Test Workspace for Document Removal';
+
+    const createDocumentRequest = new UploadDocumentRequest();
+    createDocumentRequest.text = 'Test Document Text for Removal';
+
+    const createDocumentResponse = await request(app.getHttpServer() as App)
+      .post('/documents')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(createDocumentRequest);
+
+    const createDocumentResponseBody =
+      createDocumentResponse.body as UploadDocumentResponse;
+
+    const createWorkspaceResponse = await request(app.getHttpServer() as App)
+      .post('/workspaces')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(createWorkspaceRequest);
+
+    const createWorkspaceResponseBody =
+      createWorkspaceResponse.body as CreateWorkspaceResponse;
+
+    const addDocumentToWorkspaceRequest = new AddDocumentToWorkspaceRequest();
+    addDocumentToWorkspaceRequest.documentId =
+      createDocumentResponseBody.message;
+
+    await request(app.getHttpServer() as App)
+      .post(`/workspaces/${createWorkspaceResponseBody.id}/documents`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(addDocumentToWorkspaceRequest);
+
+    // Act
+    const removeDocumentResponse = await request(app.getHttpServer() as App)
+      .delete(
+        `/workspaces/${createWorkspaceResponseBody.id}/documents/${createDocumentResponseBody.message}`,
+      )
+      .set('Authorization', `Bearer ${accessToken}`);
+
+    // Assert
+    expect(removeDocumentResponse.status).toBe(HttpStatus.NO_CONTENT);
+
+    const orm = app.get(MikroORM);
+    const em = orm.em.fork();
+    const workspaceRepository: EntityRepository<Workspace> =
+      em.getRepository(Workspace);
+
+    const workspace = await workspaceRepository.findOne(
+      {
+        id: createWorkspaceResponseBody.id,
+      },
+      {
+        populate: ['documents'],
+      },
+    );
+
+    expect(workspace).toBeDefined();
+    expect(workspace?.documents).toHaveLength(0);
+  });
 });
