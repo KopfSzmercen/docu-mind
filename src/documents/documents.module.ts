@@ -15,6 +15,7 @@ import UploadDocument from 'src/documents/features/upload-document';
 import CreateWorkspace from 'src/documents/features/workspaces/create-workspace';
 import EditWorkspace from 'src/documents/features/workspaces/edit-workspace';
 import DeleteWorkspace from 'src/documents/features/workspaces/delete-workspace';
+import BrowseWorkspaces from 'src/documents/features/workspaces/browse-workspaces';
 import { VectorStoreModule } from 'src/documents/infrastructure/vector-store/vector-store.module';
 import { Workspace } from 'src/documents/workspace.entity';
 import AddDocumentToWorkspace from 'src/documents/features/workspaces/add-document-to-workspace';
@@ -36,6 +37,7 @@ import RemoveDocumentFromWorkspace from 'src/documents/features/workspaces/remov
     EditNote,
     DeleteNote,
     CreateWorkspace,
+    BrowseWorkspaces,
     EditWorkspace,
     DeleteWorkspace,
     AddDocumentToWorkspace,

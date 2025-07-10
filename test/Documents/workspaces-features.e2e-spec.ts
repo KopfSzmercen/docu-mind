@@ -415,4 +415,47 @@ describe('Workspaces features tests', () => {
     expect(workspace).toBeDefined();
     expect(workspace?.documents).toHaveLength(0);
   });
+
+  it('(GET /workspaces) should browse workspaces', async () => {
+    // Arrange
+    const { accessToken, userId } = await setupUser();
+
+    const createWorkspaceRequest1 = new CreateWorkspaceRequest();
+    createWorkspaceRequest1.name = 'A';
+
+    const createWorkspaceResponse1 = await request(app.getHttpServer() as App)
+      .post('/workspaces')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(createWorkspaceRequest1);
+
+    const createWorkspaceResponseBody1 =
+      createWorkspaceResponse1.body as CreateWorkspaceResponse;
+
+    const createWorkspaceRequest2 = new CreateWorkspaceRequest();
+    createWorkspaceRequest2.name = 'B';
+
+    const createWorkspaceResponse2 = await request(app.getHttpServer() as App)
+      .post('/workspaces')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(createWorkspaceRequest2);
+
+    const createWorkspaceResponseBody2 =
+      createWorkspaceResponse2.body as CreateWorkspaceResponse;
+
+    // Act
+    const response = await request(app.getHttpServer() as App)
+      .get('/workspaces?sortBy=name&sortOrder=asc')
+      .set('Authorization', `Bearer ${accessToken}`);
+
+    // Assert
+    expect(response.status).toBe(200);
+    const responseBody = response.body as { workspaces: Workspace[] };
+    expect(responseBody.workspaces).toHaveLength(2);
+    expect(responseBody.workspaces[0].id).toBe(createWorkspaceResponseBody1.id);
+    expect(responseBody.workspaces[0].name).toBe('A');
+    expect(responseBody.workspaces[0].userId).toBe(userId);
+    expect(responseBody.workspaces[1].id).toBe(createWorkspaceResponseBody2.id);
+    expect(responseBody.workspaces[1].name).toBe('B');
+    expect(responseBody.workspaces[1].userId).toBe(userId);
+  });
 });
